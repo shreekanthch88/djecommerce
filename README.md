@@ -164,6 +164,55 @@ gunicorn djecommerce.wsgi:application
 - Build command: `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate`
 - Start command: `gunicorn djecommerce.wsgi:application`
 
+### PythonAnywhere
+
+This project can also run on PythonAnywhere. The repository does not contain any proof that your PythonAnywhere account is already configured, so from this machine we can only prepare the code and deployment steps.
+
+Recommended `.env` values for PythonAnywhere:
+
+```env
+SECRET_KEY=change-me
+DEBUG=False
+DJANGO_SETTINGS_MODULE=djecommerce.settings
+ALLOWED_HOSTS=yourusername.pythonanywhere.com
+CSRF_TRUSTED_ORIGINS=https://yourusername.pythonanywhere.com
+PYTHONANYWHERE_DOMAIN=yourusername.pythonanywhere.com
+RAZORPAY_LIVE_KEY_ID=
+RAZORPAY_LIVE_KEY_SECRET=
+```
+
+If you want to stay on SQLite, you can leave `DATABASE_URL` unset. If you use PostgreSQL or MySQL, set `DATABASE_URL` accordingly.
+
+Typical PythonAnywhere setup:
+
+1. Upload the project or clone it into `/home/yourusername/django-ecommerce-master`.
+2. Create a virtualenv and install dependencies with `pip install -r requirements.txt`.
+3. Add your production values to `/home/yourusername/django-ecommerce-master/.env`.
+4. Run `python manage.py migrate`.
+5. Run `python manage.py collectstatic --noinput`.
+6. In the PythonAnywhere Web tab, point the WSGI file to this project.
+
+Example WSGI file body:
+
+```python
+import os
+import sys
+
+path = "/home/yourusername/django-ecommerce-master"
+if path not in sys.path:
+    sys.path.append(path)
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djecommerce.settings")
+
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+```
+
+Static files mapping in PythonAnywhere:
+
+- URL: `/static/` -> Directory: `/home/yourusername/django-ecommerce-master/static_root`
+- URL: `/media/` -> Directory: `/home/yourusername/django-ecommerce-master/media_root`
+
 ## Payments
 
 ### Razorpay

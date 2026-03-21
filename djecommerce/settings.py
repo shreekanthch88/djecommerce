@@ -45,12 +45,15 @@ IS_RUNSERVER = 'runserver' in sys.argv
 ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', default='127.0.0.1,localhost')
 render_hostname = env_value('RENDER_EXTERNAL_HOSTNAME')
 render_service_name = env_value('RENDER_SERVICE_NAME')
+pythonanywhere_domain = env_value('PYTHONANYWHERE_DOMAIN')
 if render_hostname and render_hostname not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(render_hostname)
 if render_service_name:
     render_onrender_host = f'{render_service_name}.onrender.com'
     if render_onrender_host not in ALLOWED_HOSTS:
         ALLOWED_HOSTS.append(render_onrender_host)
+if pythonanywhere_domain and pythonanywhere_domain not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(pythonanywhere_domain)
 
 
 INSTALLED_APPS = [
@@ -165,6 +168,10 @@ if render_service_name:
     render_service_origin = f'https://{render_service_name}.onrender.com'
     if render_service_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(render_service_origin)
+if pythonanywhere_domain:
+    pythonanywhere_origin = f'https://{pythonanywhere_domain}'
+    if pythonanywhere_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(pythonanywhere_origin)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 secure_defaults_enabled = not IS_LOCAL_ENV and not IS_RUNSERVER
 SECURE_SSL_REDIRECT = env_flag('SECURE_SSL_REDIRECT', default=secure_defaults_enabled)
