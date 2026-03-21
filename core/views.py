@@ -32,6 +32,13 @@ def get_razorpay_client():
     return razorpay.Client(auth=(key_id, key_secret))
 
 
+def razorpay_key_names():
+    mode = getattr(settings, "RAZORPAY_MODE", "test")
+    if mode == "live":
+        return "RAZORPAY_LIVE_KEY_ID", "RAZORPAY_LIVE_KEY_SECRET"
+    return "RAZORPAY_TEST_KEY_ID", "RAZORPAY_TEST_KEY_SECRET"
+
+
 def create_ref_code():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
 
@@ -280,9 +287,10 @@ class PaymentView(LoginRequiredMixin, View):
 
             key_id = getattr(settings, "RAZORPAY_KEY_ID", "")
             if not key_id.startswith("rzp_"):
+                key_name, _ = razorpay_key_names()
                 messages.warning(
                     self.request,
-                    "Invalid Razorpay key id. Update RAZORPAY_TEST_KEY_ID in .env and restart server."
+                    f"Invalid Razorpay key id. Update {key_name} in .env and restart server."
                 )
                 return redirect("core:checkout")
 
@@ -293,9 +301,10 @@ class PaymentView(LoginRequiredMixin, View):
 
             client = get_razorpay_client()
             if client is None:
+                key_id_name, key_secret_name = razorpay_key_names()
                 messages.warning(
                     self.request,
-                    "Razorpay keys are missing. Add RAZORPAY_TEST_KEY_ID and RAZORPAY_TEST_KEY_SECRET in .env."
+                    f"Razorpay keys are missing. Add {key_id_name} and {key_secret_name} in .env."
                 )
                 return redirect("core:checkout")
             try:
@@ -307,7 +316,7 @@ class PaymentView(LoginRequiredMixin, View):
             except Exception:
                 messages.warning(
                     self.request,
-                    "Unable to initialize Razorpay checkout. Check your test keys and internet connection."
+                    "Unable to initialize Razorpay checkout. Check your configured Razorpay keys and internet connection."
                 )
                 return redirect("core:checkout")
 
@@ -341,9 +350,10 @@ class PaymentView(LoginRequiredMixin, View):
         if payment_option == 'razorpay':
             client = get_razorpay_client()
             if client is None:
+                key_id_name, key_secret_name = razorpay_key_names()
                 messages.warning(
                     self.request,
-                    "Razorpay keys are missing. Add RAZORPAY_TEST_KEY_ID and RAZORPAY_TEST_KEY_SECRET in .env."
+                    f"Razorpay keys are missing. Add {key_id_name} and {key_secret_name} in .env."
                 )
                 return redirect("/payment/razorpay/")
             razorpay_payment_id = self.request.POST.get("razorpay_payment_id")
@@ -386,9 +396,10 @@ def razorpay_callback(request):
 
     client = get_razorpay_client()
     if client is None:
+        key_id_name, key_secret_name = razorpay_key_names()
         messages.warning(
             request,
-            "Razorpay keys are missing. Add RAZORPAY_TEST_KEY_ID and RAZORPAY_TEST_KEY_SECRET in .env."
+            f"Razorpay keys are missing. Add {key_id_name} and {key_secret_name} in .env."
         )
         return redirect("core:checkout")
 

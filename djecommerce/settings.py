@@ -22,6 +22,15 @@ def env_flag(name, default=False):
     return default
 
 
+def env_value(name, default=''):
+    value = str(config(name, default=default)).strip()
+    if not value:
+        return default
+    if value.lower().startswith('your-'):
+        return ''
+    return value
+
+
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me')
 DEBUG = env_flag('DEBUG', default=True)
 IS_RUNSERVER = 'runserver' in sys.argv
@@ -157,24 +166,24 @@ DEFAULT_FROM_EMAIL = config(
 )
 
 
-if DEBUG:
-    RAZORPAY_KEY_ID = config(
-        'RAZORPAY_TEST_KEY_ID',
-        default=config('RAZORPAY_LIVE_KEY_ID', default=''),
-    )
-    RAZORPAY_KEY_SECRET = config(
-        'RAZORPAY_TEST_KEY_SECRET',
-        default=config('RAZORPAY_LIVE_KEY_SECRET', default=''),
-    )
+RAZORPAY_MODE = config(
+    'RAZORPAY_MODE',
+    default='test' if IS_LOCAL_ENV else ('test' if DEBUG else 'live'),
+).strip().lower()
+if RAZORPAY_MODE not in {'test', 'live'}:
+    RAZORPAY_MODE = 'test' if IS_LOCAL_ENV else 'live'
+
+RAZORPAY_TEST_KEY_ID = env_value('RAZORPAY_TEST_KEY_ID')
+RAZORPAY_TEST_KEY_SECRET = env_value('RAZORPAY_TEST_KEY_SECRET')
+RAZORPAY_LIVE_KEY_ID = env_value('RAZORPAY_LIVE_KEY_ID')
+RAZORPAY_LIVE_KEY_SECRET = env_value('RAZORPAY_LIVE_KEY_SECRET')
+
+if RAZORPAY_MODE == 'live':
+    RAZORPAY_KEY_ID = RAZORPAY_LIVE_KEY_ID or RAZORPAY_TEST_KEY_ID
+    RAZORPAY_KEY_SECRET = RAZORPAY_LIVE_KEY_SECRET or RAZORPAY_TEST_KEY_SECRET
 else:
-    RAZORPAY_KEY_ID = config(
-        'RAZORPAY_LIVE_KEY_ID',
-        default=config('RAZORPAY_TEST_KEY_ID', default=''),
-    )
-    RAZORPAY_KEY_SECRET = config(
-        'RAZORPAY_LIVE_KEY_SECRET',
-        default=config('RAZORPAY_TEST_KEY_SECRET', default=''),
-    )
+    RAZORPAY_KEY_ID = RAZORPAY_TEST_KEY_ID or RAZORPAY_LIVE_KEY_ID
+    RAZORPAY_KEY_SECRET = RAZORPAY_TEST_KEY_SECRET or RAZORPAY_LIVE_KEY_SECRET
 
 GOOGLE_MAPS_API_KEY = config('GOOGLE_MAPS_API_KEY', default='')
 
