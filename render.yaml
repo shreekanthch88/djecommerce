@@ -17,9 +17,9 @@ services:
       - key: DB_SSL_REQUIRE
         value: "True"
       - key: ALLOWED_HOSTS
-        value: "django-ecommerce-app.onrender.com"
+        value: "django-ecommerce-master-finale1.onrender.com,django-ecommerce-app.onrender.com"
       - key: CSRF_TRUSTED_ORIGINS
-        value: "https://django-ecommerce-app.onrender.com"
+        value: "https://django-ecommerce-master-finale1.onrender.com,https://django-ecommerce-app.onrender.com"
 
 databases:
   - name: ecommerce-db
