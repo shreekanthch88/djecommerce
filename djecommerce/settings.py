@@ -31,14 +31,26 @@ def env_value(name, default=''):
     return value
 
 
+def env_list(name, default=''):
+    return [
+        item.strip().strip("'\"[]")
+        for item in str(config(name, default=default)).split(',')
+        if item.strip()
+    ]
+
+
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me')
 DEBUG = env_flag('DEBUG', default=True)
 IS_RUNSERVER = 'runserver' in sys.argv
-ALLOWED_HOSTS = [
-    host.strip()
-    for host in config('ALLOWED_HOSTS', default='127.0.0.1,localhost').split(',')
-    if host.strip()
-]
+ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', default='127.0.0.1,localhost')
+render_hostname = env_value('RENDER_EXTERNAL_HOSTNAME')
+render_service_name = env_value('RENDER_SERVICE_NAME')
+if render_hostname and render_hostname not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_hostname)
+if render_service_name:
+    render_onrender_host = f'{render_service_name}.onrender.com'
+    if render_onrender_host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(render_onrender_host)
 
 
 INSTALLED_APPS = [
@@ -144,11 +156,15 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap4',)
 
 
-CSRF_TRUSTED_ORIGINS = [
-    origin.strip().strip("'\"[]")
-    for origin in config('CSRF_TRUSTED_ORIGINS', default='').split(',')
-    if origin.strip()
-]
+CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS', default='')
+if render_hostname:
+    render_origin = f'https://{render_hostname}'
+    if render_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(render_origin)
+if render_service_name:
+    render_service_origin = f'https://{render_service_name}.onrender.com'
+    if render_service_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(render_service_origin)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 secure_defaults_enabled = not IS_LOCAL_ENV and not IS_RUNSERVER
 SECURE_SSL_REDIRECT = env_flag('SECURE_SSL_REDIRECT', default=secure_defaults_enabled)
