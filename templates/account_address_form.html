@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block head_title %}{% if mode == "edit" %}Edit Address{% else %}Add Address{% endif %} | Fashion HUB{% endblock head_title %}
+
+{% block extra_head %}
+<style>
+  .address-form-page {
+    --ink: #1f2530;
+    --line: #e8edf4;
+    --shadow: 0 16px 36px rgba(31, 37, 48, 0.08);
+    color: var(--ink);
+    padding-bottom: 2rem;
+  }
+
+  .address-hero {
+    margin-top: 1.45rem;
+    border-radius: 22px;
+    padding: 1.45rem 1.5rem;
+    background: radial-gradient(circle at 10% 22%, rgba(246, 182, 69, 0.22), transparent 34%),
+                radial-gradient(circle at 90% 16%, rgba(199, 48, 103, 0.2), transparent 34%),
+                linear-gradient(120deg, #fffefb 0%, #f4f6ff 56%, #f2fcff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .address-hero h2 {
+    margin: 0;
+    font-weight: 800;
+    font-size: clamp(1.45rem, 3vw, 2.2rem);
+  }
+
+  .address-hero p {
+    margin: 0.45rem 0 0;
+    color: #5a6473;
+  }
+
+  .address-card {
+    margin-top: 1rem;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: var(--shadow);
+    border: 0;
+    overflow: hidden;
+  }
+
+  .address-card-body {
+    padding: 1.15rem 1.2rem 1.2rem;
+  }
+
+  .address-form-page label {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    color: #2f3948;
+  }
+
+  .address-form-page .form-control,
+  .address-form-page .custom-select {
+    border-radius: 10px;
+    border: 1px solid #d7dfeb;
+    box-shadow: none;
+    min-height: 42px;
+  }
+
+  .address-form-page .form-control:focus,
+  .address-form-page .custom-select:focus {
+    border-color: #6ea4ff;
+    box-shadow: 0 0 0 3px rgba(78, 142, 250, 0.15);
+  }
+
+  .btn-pill {
+    border-radius: 999px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
+    min-width: 120px;
+  }
+
+  .btn-save {
+    border: 0;
+    background: linear-gradient(120deg, #c73067, #e06a94);
+    color: #fff;
+  }
+
+  .btn-save:hover {
+    color: #fff;
+    filter: brightness(0.98);
+  }
+
+  .btn-cancel {
+    border: 1px solid #b6c2d5;
+    background: #fff;
+    color: #415066;
+  }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<main class="address-form-page">
+  <div class="container">
+    <section class="address-hero">
+      <h2>{% if mode == "edit" %}Edit Address{% else %}Add Address{% endif %}</h2>
+      <p>Save accurate delivery details for faster and smoother checkout.</p>
+    </section>
+
+    <section class="address-card">
+      <div class="address-card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Full Name</label>
+              <input class="form-control" type="text" name="full_name" value="{{ form.full_name.value|default_if_none:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Phone Number</label>
+              <input class="form-control" type="text" name="phone_number" value="{{ form.phone_number.value|default_if_none:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>House/Flat No.</label>
+              <input class="form-control" type="text" name="house_no" value="{{ form.house_no.value|default_if_none:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Street / Area</label>
+              <input class="form-control" type="text" name="street_area" value="{{ form.street_area.value|default_if_none:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>City</label>
+              <input class="form-control" type="text" name="city" value="{{ form.city.value|default_if_none:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>State</label>
+              <input class="form-control" type="text" name="state" value="{{ form.state.value|default_if_none:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>PIN Code</label>
+              <input class="form-control" type="text" name="pin_code" value="{{ form.pin_code.value|default_if_none:'' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Country</label>
+              {{ form.country }}
+            </div>
+            <div class="col-12 mb-3">
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="is_default" name="is_default" {% if address and address.is_default %}checked{% endif %}>
+                <label class="custom-control-label" for="is_default">Set as default address</label>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn btn-save btn-pill" type="submit">Save</button>
+          <a class="btn btn-cancel btn-pill" href="{% url 'core:account' %}">Cancel</a>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+{% endblock content %}

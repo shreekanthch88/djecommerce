@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block head_title %}Cart | Fashion HUB{% endblock head_title %}
+
+{% block extra_head %}
+<style>
+  .cart-page {
+    --ink: #1f2530;
+    --teal: #1c7982;
+    --rose: #c73067;
+    --paper: #ffffff;
+    --soft-bg: #f6f8fc;
+    --line: #e8edf4;
+    --shadow: 0 16px 36px rgba(31, 37, 48, 0.08);
+    color: var(--ink);
+    padding-bottom: 2rem;
+  }
+
+  .cart-header {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 20px;
+    background: radial-gradient(circle at 8% 20%, rgba(246, 182, 69, 0.23), transparent 32%),
+                radial-gradient(circle at 92% 12%, rgba(199, 48, 103, 0.2), transparent 34%),
+                linear-gradient(120deg, #fffefb 0%, #f5f7ff 60%, #f3feff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .cart-title {
+    margin: 0;
+    font-weight: 800;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  .cart-subtitle {
+    margin: 0.45rem 0 0;
+    color: #4e5662;
+  }
+
+  .cart-shell {
+    margin-top: 1.2rem;
+    background: var(--paper);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .cart-table {
+    margin-bottom: 0;
+  }
+
+  .cart-table thead th {
+    border-top: 0;
+    border-bottom: 1px solid var(--line);
+    color: #5d6672;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .cart-table td,
+  .cart-table th {
+    vertical-align: middle;
+    border-color: var(--line);
+  }
+
+  .item-thumb {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 6px 14px rgba(31, 37, 48, 0.14);
+  }
+
+  .item-name {
+    font-weight: 700;
+    margin-bottom: 0;
+    color: #1b2330;
+  }
+
+  .item-price {
+    font-weight: 700;
+    color: #1d6d80;
+  }
+
+  .qty-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    background: var(--soft-bg);
+    border: 1px solid #dde4ee;
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+  }
+
+  .qty-link {
+    color: #3b4756;
+    font-size: 0.85rem;
+  }
+
+  .qty-link:hover {
+    color: var(--rose);
+  }
+
+  .saving-badge {
+    background: linear-gradient(120deg, #1c7982, #33a6b1);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    padding: 0.28rem 0.6rem;
+    margin-left: 0.45rem;
+  }
+
+  .remove-link {
+    color: #d43d54;
+    margin-left: 0.6rem;
+  }
+
+  .remove-link:hover {
+    color: #b42e43;
+  }
+
+  .cart-footer {
+    border-top: 1px solid var(--line);
+    padding: 1rem 1.2rem 1.2rem;
+    background: #fbfcff;
+  }
+
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.45rem 0;
+    color: #333b47;
+  }
+
+  .totals-row strong {
+    color: #0f5f77;
+  }
+
+  .cart-actions {
+    margin-top: 0.85rem;
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .btn-pill {
+    border-radius: 999px;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    font-weight: 700;
+  }
+
+  .btn-checkout {
+    background: linear-gradient(120deg, #c73067, #e26a95);
+    border: none;
+    color: #fff;
+  }
+
+  .empty-cart {
+    padding: 2rem 1.2rem;
+    text-align: center;
+  }
+
+  .empty-cart h4 {
+    margin-bottom: 0.55rem;
+    font-weight: 800;
+  }
+
+  @media (max-width: 767.98px) {
+    .cart-header {
+      padding: 1.15rem;
+    }
+
+    .cart-table thead {
+      display: none;
+    }
+
+    .cart-table,
+    .cart-table tbody,
+    .cart-table tr,
+    .cart-table td {
+      display: block;
+      width: 100%;
+    }
+
+    .cart-table tr {
+      border-bottom: 1px solid var(--line);
+      padding: 0.85rem 1rem;
+    }
+
+    .cart-table td {
+      border: 0;
+      padding: 0.3rem 0;
+    }
+
+    .cart-actions {
+      justify-content: stretch;
+    }
+
+    .cart-actions .btn {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<main class="cart-page">
+  <div class="container">
+    <section class="cart-header">
+      <h1 class="cart-title">Your Shopping Cart</h1>
+      <p class="cart-subtitle">Review items, update quantities, and proceed when you are ready.</p>
+    </section>
+
+    <section class="cart-shell">
+      {% if object.items.all %}
+      <div class="table-responsive">
+        <table class="table cart-table text-nowrap">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Product</th>
+              <th scope="col">Title</th>
+              <th scope="col">Price</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order_item in object.items.all %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>
+                <img src="{{ order_item.item.image.url }}" alt="{{ order_item.item.title }}" class="item-thumb" />
+              </td>
+              <td>
+                <p class="item-name">{{ order_item.item.title }}</p>
+              </td>
+              <td>
+                <span class="item-price">&#8377;{{ order_item.item.price }}</span>
+              </td>
+              <td>
+                <span class="qty-wrap">
+                  <a class="qty-link" href="{% url 'core:remove-single-item-from-cart' order_item.item.slug %}">
+                    <i class="fas fa-minus"></i>
+                  </a>
+                  <strong>{{ order_item.quantity }}</strong>
+                  <a class="qty-link" href="{% url 'core:add-to-cart' order_item.item.slug %}">
+                    <i class="fas fa-plus"></i>
+                  </a>
+                </span>
+              </td>
+              <td>
+                {% if order_item.item.discount_price %}
+                <strong>&#8377;{{ order_item.get_total_discount_item_price }}</strong>
+                <span class="saving-badge">Save &#8377;{{ order_item.get_amount_saved }}</span>
+                {% else %}
+                <strong>&#8377;{{ order_item.get_total_item_price }}</strong>
+                {% endif %}
+                <a class="remove-link" href="{% url 'core:remove-from-cart' order_item.item.slug %}">
+                  <i class="fas fa-trash"></i>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cart-footer">
+        {% if object.coupon %}
+        <div class="totals-row">
+          <span><strong>Coupon:</strong> {{ object.coupon.code }}</span>
+          <strong>-&#8377;{{ object.coupon.amount }}</strong>
+        </div>
+        {% endif %}
+
+        {% if object.get_total %}
+        <div class="totals-row">
+          <span><strong>Order Total</strong></span>
+          <strong>&#8377;{{ object.get_total }}</strong>
+        </div>
+
+        <div class="cart-actions">
+          <a class="btn btn-outline-primary btn-pill" href="{% url 'core:home' %}">Continue Shopping</a>
+          <a class="btn btn-checkout btn-pill" href="{% url 'core:checkout' %}">Proceed to Checkout</a>
+        </div>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="empty-cart">
+        <h4>Your cart is empty</h4>
+        <p class="text-muted mb-3">Add some products and they will appear here.</p>
+        <a class="btn btn-primary btn-pill" href="{% url 'core:home' %}">Continue Shopping</a>
+      </div>
+      {% endif %}
+    </section>
+  </div>
+</main>
+{% endblock content %}

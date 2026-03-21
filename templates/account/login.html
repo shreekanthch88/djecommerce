@@ -1,0 +1,158 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+{% load account socialaccount %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+<main class="signin-page">
+  <div class="container">
+    <section class="signin-hero">
+      <h1>{% trans "Welcome Back" %}</h1>
+      <p>{% trans "Sign in to continue shopping, manage your orders, and access your wishlist." %}</p>
+    </section>
+
+    <section class="signin-card-wrap">
+      <div class="signin-card">
+        <div class="signin-icon"><i class="fas fa-sign-in-alt"></i></div>
+        <h4 class="mb-2">{% trans "Sign In" %}</h4>
+
+        {% get_providers as socialaccount_providers %}
+
+        {% if socialaccount_providers %}
+        <p class="text-muted mb-2">
+          {% blocktrans with site.name as site_name %}Please sign in with one of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a> for a {{ site_name }} account and sign in below:{% endblocktrans %}
+        </p>
+
+        <div class="socialaccount_ballot mb-3">
+          <ul class="socialaccount_providers mb-2">
+            {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+          </ul>
+          <div class="login-or">{% trans 'or' %}</div>
+        </div>
+
+        {% include "socialaccount/snippets/login_extra.html" %}
+        {% else %}
+        <p class="text-muted mb-3">{% blocktrans %}If you have not created an account yet, then please <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+        {% endif %}
+
+        <form class="login" method="POST" action="{% url 'account_login' %}">
+          {% csrf_token %}
+          {{ form|crispy }}
+          {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+
+          <div class="signin-actions mt-2">
+            <a class="btn btn-outline-secondary btn-pill" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            <button class="btn signin-btn btn-pill" type="submit">{% trans "Sign In" %}</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+
+<style>
+  .signin-page {
+    --ink: #1f2530;
+    --line: #e8edf4;
+    --shadow: 0 16px 36px rgba(31, 37, 48, 0.08);
+    color: var(--ink);
+    padding-bottom: 2rem;
+  }
+
+  .signin-hero {
+    margin-top: 1.45rem;
+    border-radius: 22px;
+    padding: 1.45rem 1.5rem;
+    background: radial-gradient(circle at 10% 22%, rgba(246, 182, 69, 0.22), transparent 34%),
+                radial-gradient(circle at 90% 16%, rgba(199, 48, 103, 0.2), transparent 34%),
+                linear-gradient(120deg, #fffefb 0%, #f4f6ff 56%, #f2fcff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .signin-hero h1 {
+    margin: 0;
+    font-weight: 800;
+    font-size: clamp(1.45rem, 3vw, 2.2rem);
+  }
+
+  .signin-hero p {
+    margin: 0.45rem 0 0;
+    color: #5a6473;
+  }
+
+  .signin-card-wrap {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .signin-card {
+    width: 100%;
+    max-width: 620px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    padding: 1.25rem 1.2rem 1.2rem;
+  }
+
+  .signin-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    margin-bottom: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(120deg, #4a80e0, #7d9fff);
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(74, 128, 224, 0.28);
+    font-size: 1.15rem;
+  }
+
+  .signin-card h4 {
+    font-weight: 800;
+  }
+
+  .signin-card .form-control {
+    border-radius: 10px;
+    border: 1px solid #d7dfeb;
+    box-shadow: none;
+  }
+
+  .signin-card .form-control:focus {
+    border-color: #6ea4ff;
+    box-shadow: 0 0 0 3px rgba(78, 142, 250, 0.15);
+  }
+
+  .signin-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-pill {
+    border-radius: 999px;
+    font-weight: 700;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .signin-btn {
+    border: 0;
+    background: linear-gradient(120deg, #c73067, #e06a94);
+    color: #fff;
+    font-weight: 800;
+    min-width: 130px;
+  }
+
+  .signin-btn:hover {
+    color: #fff;
+    filter: brightness(0.98);
+  }
+</style>
+{% endblock %}

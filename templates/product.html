@@ -1,0 +1,114 @@
+{% extends "base.html" %} {% block content %}
+
+<main class="mt-5 pt-4">
+  <div class="container dark-grey-text mt-5">
+    <!--Grid row-->
+    <div class="row wow fadeIn mt-5 pt-3">
+      <!--Grid column-->
+      <div class="col-md-6 mb-4">
+        <div class="product-detail-image-wrap rounded shadow">
+          <img
+            src="{{ object.image.url }}"
+            class="img-fluid uploaded-image-fit"
+            alt="{{ object.title }}"
+          />
+        </div>
+      </div>
+      <!--Grid column-->
+
+      <!--Grid column-->
+      <div class="col-md-6 mb-4">
+        <!--Content-->
+        <div class="p-4">
+          <div class="mb-3">
+            <a href="">
+              <span class="badge purple mr-1"
+                >{{ object.get_category_display }}</span
+              >
+            </a>
+          </div>
+
+          <p class="lead">
+            {% if object.discount_price %}
+            <span class="mr-1">
+              <del>₹{{ object.price }}</del>
+            </span>
+            <span>₹{{ object.discount_price }}</span>
+            {% else %}
+            <span>₹{{ object.price }}</span>
+            {% endif %}
+          </p>
+
+          <p class="lead font-weight-bold">Description</p>
+
+          <p>{{ object.description }}</p>
+
+          {% comment %}
+          <form class="d-flex justify-content-left">
+            <!-- Default input -->
+            <input
+              type="number"
+              value="1"
+              aria-label="Search"
+              class="form-control"
+              style="width: 100px"
+            />
+            <button class="btn btn-primary btn-md my-0 p" type="submit">
+              Add to cart
+              <i class="fas fa-shopping-cart ml-1"></i>
+            </button>
+          </form>
+          {% endcomment %}
+          <a
+            href="{{ object.get_add_to_cart_url }}"
+            class="btn btn-primary btn-md my-0 p"
+          >
+            Add to cart
+            <i class="fas fa-shopping-cart ml-1"></i>
+          </a>
+          <a
+            href="{% url 'core:wishlist-add' object.slug %}"
+            class="btn btn-outline-secondary btn-md my-0 p"
+          >
+            Add to wishlist
+            <i class="fas fa-heart ml-1"></i>
+          </a>
+          <a
+            href="{{ object.get_remove_from_cart_url }}"
+            class="btn btn-danger btn-md my-0 p"
+          >
+            Remove from cart
+          </a>
+        </div>
+        <!--Content-->
+      </div>
+      <!--Grid column-->
+    </div>
+    <!--Grid row-->
+
+    <!--Grid row-->
+    <div class="row wow fadeIn">
+      {% for item in related_items %}
+      <div class="col-lg-4 col-md-6 mb-4">
+        <a href="{{ item.get_absolute_url }}">
+          <div class="product-card-image-wrap rounded shadow-sm">
+            <img
+              src="{{ item.image.url }}"
+              class="img-fluid uploaded-image-fit"
+              alt="{{ item.title }}"
+            />
+          </div>
+        </a>
+        <p class="text-center mt-2 mb-0">{{ item.title }}</p>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center">
+        <p class="text-muted">No related products available in this category.</p>
+      </div>
+      {% endfor %}
+    </div>
+    <!--Grid row-->
+  </div>
+</main>
+
+{% endblock content %}

@@ -1,0 +1,127 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign Out" %}{% endblock %}
+
+{% block content %}
+<main class="signout-page">
+  <div class="container">
+    <section class="signout-hero">
+      <h1>{% trans "Sign Out" %}</h1>
+      <p>{% trans "You are about to end your current session." %}</p>
+    </section>
+
+    <section class="signout-card-wrap">
+      <div class="signout-card">
+        <div class="signout-icon"><i class="fas fa-sign-out-alt"></i></div>
+        <h4>{% trans "Are you sure you want to sign out?" %}</h4>
+        <p class="text-muted mb-4">{% trans "You can sign in again anytime with your account credentials." %}</p>
+
+        <form method="post" action="{% url 'account_logout' %}">
+          {% csrf_token %}
+          {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+          {% endif %}
+
+          <div class="signout-actions">
+            <a href="{% url 'core:home' %}" class="btn btn-outline-secondary btn-pill">Cancel</a>
+            <button class="btn btn-signout btn-pill" type="submit">{% trans "Sign Out" %}</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+
+<style>
+  .signout-page {
+    --ink: #1f2530;
+    --line: #e8edf4;
+    --shadow: 0 16px 36px rgba(31, 37, 48, 0.08);
+    color: var(--ink);
+    padding-bottom: 2rem;
+  }
+
+  .signout-hero {
+    margin-top: 1.45rem;
+    border-radius: 22px;
+    padding: 1.45rem 1.5rem;
+    background: radial-gradient(circle at 10% 22%, rgba(246, 182, 69, 0.22), transparent 34%),
+                radial-gradient(circle at 90% 16%, rgba(199, 48, 103, 0.2), transparent 34%),
+                linear-gradient(120deg, #fffefb 0%, #f4f6ff 56%, #f2fcff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .signout-hero h1 {
+    margin: 0;
+    font-weight: 800;
+    font-size: clamp(1.45rem, 3vw, 2.2rem);
+  }
+
+  .signout-hero p {
+    margin: 0.45rem 0 0;
+    color: #5a6473;
+  }
+
+  .signout-card-wrap {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .signout-card {
+    width: 100%;
+    max-width: 560px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    padding: 1.3rem 1.2rem 1.2rem;
+    text-align: center;
+  }
+
+  .signout-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    margin: 0 auto 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(120deg, #ff5b79, #ff8ca1);
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(255, 91, 121, 0.3);
+    font-size: 1.2rem;
+  }
+
+  .signout-card h4 {
+    margin-bottom: 0.45rem;
+    font-weight: 800;
+  }
+
+  .signout-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-pill {
+    border-radius: 999px;
+    font-weight: 700;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .btn-signout {
+    background: linear-gradient(120deg, #c73067, #e06a94);
+    border: 0;
+    color: #fff;
+  }
+
+  .btn-signout:hover {
+    color: #fff;
+    filter: brightness(0.98);
+  }
+</style>
+{% endblock %}

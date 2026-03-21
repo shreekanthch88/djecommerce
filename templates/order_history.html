@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block head_title %}Order History | Fashion HUB{% endblock head_title %}
+
+{% block extra_head %}
+<style>
+  .order-history-page {
+    --ink: #1f2530;
+    --rose: #c73067;
+    --teal: #1d7b84;
+    --line: #e8edf4;
+    --shadow: 0 16px 36px rgba(31, 37, 48, 0.08);
+    color: var(--ink);
+    padding-bottom: 2rem;
+  }
+
+  .history-hero {
+    margin-top: 1.45rem;
+    border-radius: 22px;
+    padding: 1.45rem 1.5rem;
+    background: radial-gradient(circle at 10% 22%, rgba(246, 182, 69, 0.22), transparent 34%),
+                radial-gradient(circle at 90% 16%, rgba(199, 48, 103, 0.2), transparent 34%),
+                linear-gradient(120deg, #fffefb 0%, #f4f6ff 56%, #f2fcff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .history-hero h2 {
+    margin: 0;
+    font-weight: 800;
+    font-size: clamp(1.45rem, 3vw, 2.2rem);
+  }
+
+  .history-hero p {
+    margin: 0.45rem 0 0;
+    color: #576172;
+  }
+
+  .history-card {
+    margin-top: 1rem;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .history-table {
+    margin-bottom: 0;
+  }
+
+  .history-table thead th {
+    border-top: 0;
+    border-bottom: 1px solid var(--line);
+    color: #5c6573;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+  }
+
+  .history-table td,
+  .history-table th {
+    vertical-align: middle;
+    border-color: var(--line);
+  }
+
+  .order-id {
+    font-weight: 800;
+    color: #1e2632;
+  }
+
+  .products-list {
+    margin: 0;
+    padding-left: 1rem;
+    color: #3e4653;
+  }
+
+  .products-list li {
+    margin-bottom: 0.15rem;
+  }
+
+  .total-amt {
+    font-weight: 800;
+    color: #0f5f77;
+  }
+
+  .pill {
+    border-radius: 999px;
+    padding: 0.22rem 0.58rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    display: inline-block;
+  }
+
+  .payment-pill {
+    background: #ecf7fb;
+    color: #14627b;
+    border: 1px solid #c9eaf2;
+  }
+
+  .status-pill {
+    background: #f3f5fa;
+    color: #3f4857;
+    border: 1px solid #e1e6f0;
+  }
+
+  .action-btn {
+    border-radius: 999px;
+    font-weight: 700;
+    margin: 0.15rem 0.2rem 0.15rem 0;
+    min-width: 110px;
+  }
+
+  .action-btn.refund {
+    min-width: 125px;
+  }
+
+  .empty-history {
+    margin-top: 1rem;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: var(--shadow);
+    padding: 1.2rem;
+  }
+
+  @media (max-width: 991.98px) {
+    .history-table thead {
+      display: none;
+    }
+
+    .history-table,
+    .history-table tbody,
+    .history-table tr,
+    .history-table td {
+      display: block;
+      width: 100%;
+    }
+
+    .history-table tr {
+      padding: 0.9rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .history-table td {
+      border: 0;
+      padding: 0.25rem 0;
+    }
+
+    .history-table td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #66707f;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.1rem;
+    }
+  }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<main class="order-history-page">
+  <div class="container">
+    <section class="history-hero">
+      <h2>Order History</h2>
+      <p>Track all your past purchases, payment method, order status, and actions.</p>
+    </section>
+
+    {% if orders %}
+    <section class="history-card">
+      <div class="table-responsive">
+        <table class="table history-table text-nowrap">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Date</th>
+              <th>Products</th>
+              <th>Total</th>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr>
+              <td data-label="Order ID"><span class="order-id">{{ order.ref_code|default:order.id }}</span></td>
+              <td data-label="Date">{{ order.ordered_date|date:"d M Y, H:i" }}</td>
+              <td data-label="Products">
+                <ul class="products-list">
+                  {% for item in order.items.all %}
+                  <li>{{ item.item.title }}</li>
+                  {% endfor %}
+                </ul>
+              </td>
+              <td data-label="Total"><span class="total-amt">&#8377;{{ order.get_total }}</span></td>
+              <td data-label="Payment">
+                <span class="pill payment-pill">
+                  {% if order.payment and order.payment.razorpay_payment_id %}Razorpay
+                  {% elif order.payment and order.payment.stripe_charge_id %}Card
+                  {% else %}Unknown{% endif %}
+                </span>
+              </td>
+              <td data-label="Status"><span class="pill status-pill">{{ order.get_status_display_label }}</span></td>
+              <td data-label="Actions">
+                <a class="btn btn-sm btn-outline-primary action-btn" href="{% url 'core:order-detail' order.id %}">View</a>
+                <form method="post" action="{% url 'core:order-cancel' order.id %}" class="d-inline">
+                  {% csrf_token %}
+                  <button class="btn btn-sm btn-outline-danger action-btn" type="submit">Cancel</button>
+                </form>
+                <a class="btn btn-sm btn-outline-secondary action-btn refund" href="{% url 'core:request-refund' %}">Return/Refund</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+    {% else %}
+    <div class="empty-history">
+      <p class="mb-0">You have no past orders.</p>
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock content %}

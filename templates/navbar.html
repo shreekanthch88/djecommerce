@@ -1,0 +1,193 @@
+{% load cart_template_tags %}
+
+<style>
+  .fashion-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    text-decoration: none;
+  }
+
+  .fashion-brand-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #c72f66, #f06a96);
+    box-shadow: 0 10px 18px rgba(199, 47, 102, 0.28);
+  }
+
+  .fashion-brand-text {
+    font-weight: 800;
+    font-size: 1.9rem;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    background: linear-gradient(120deg, #ba275f, #ef6b96, #1d7b84);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-transform: uppercase;
+  }
+
+  .nav-action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    padding: 0.45rem 0.82rem !important;
+    font-weight: 700;
+    color: #1f2530 !important;
+    transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
+  }
+
+  .nav-action-link i {
+    font-size: 1.1rem;
+  }
+
+  .nav-action-link:hover {
+    background: #f3f7ff;
+    box-shadow: inset 0 0 0 1px #d9e3f3;
+    color: #0f5f77 !important;
+  }
+
+  .cart-link {
+    position: relative;
+  }
+
+  .cart-count-badge {
+    background: linear-gradient(120deg, #ff3f62, #ff6f8e);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    box-shadow: 0 4px 10px rgba(255, 63, 98, 0.3);
+  }
+
+  .logout-btn {
+    border-radius: 999px;
+    padding: 0.45rem 1.05rem !important;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border: 1px solid #ff395f !important;
+    color: #ff395f !important;
+    background: #fff;
+    box-shadow: 0 8px 14px rgba(255, 57, 95, 0.16);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+
+  .logout-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 16px rgba(255, 57, 95, 0.22);
+    background: #fff5f7;
+  }
+</style>
+
+<nav
+  class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar"
+>
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand waves-effect fashion-brand" href="{% url 'core:welcome' %}">
+      <span class="fashion-brand-icon"><i class="fas fa-tshirt"></i></span>
+      <strong class="fashion-brand-text">Fashion HUB</strong>
+    </a>
+
+    <!-- Collapse Button -->
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- LEFT SIDE (empty for future links) -->
+      <ul class="navbar-nav mr-auto"></ul>
+
+      <!-- RIGHT SIDE -->
+      <ul class="navbar-nav ml-auto align-items-center">
+        {% if request.user.is_authenticated %}
+
+        <!-- Account -->
+        <li class="nav-item mr-3">
+          <a href="{% url 'core:account' %}" class="nav-link nav-action-link">
+            <i class="fas fa-user-circle fa-lg"></i>
+            <span class="d-none d-sm-inline-block ml-1">Account</span>
+          </a>
+        </li>
+
+        <!-- Cart -->
+        <li class="nav-item mr-3">
+          <a
+            href="{% url 'core:order-summary' %}"
+            class="nav-link nav-action-link cart-link"
+          >
+            <i class="fas fa-shopping-cart fa-lg"></i>
+
+            <span
+              class="cart-count-badge"
+            >
+              {{ request.user|cart_item_count }}
+            </span>
+
+            <span class="d-none d-sm-inline-block ml-1">Cart</span>
+          </a>
+        </li>
+
+        <!-- Logout Button -->
+        <li class="nav-item">
+          <a
+            class="btn btn-sm logout-btn"
+            href="{% url 'account_logout' %}"
+          >
+            Logout
+          </a>
+        </li>
+
+        {% else %}
+
+        <!-- Login Button -->
+        <li class="nav-item mr-2">
+          <a
+            class="btn btn-outline-primary btn-sm rounded-pill px-3"
+            href="{% url 'account_login' %}"
+          >
+            Login
+          </a>
+        </li>
+
+        <!-- Signup Button -->
+        <li class="nav-item">
+          <a
+            class="btn btn-primary btn-sm rounded-pill px-3"
+            href="{% url 'account_signup' %}"
+          >
+            Signup
+          </a>
+        </li>
+
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

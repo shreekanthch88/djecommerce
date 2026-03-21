@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Request Refund | Fashion HUB{% endblock head_title %}
+
+{% block extra_head %}
+<style>
+  .refund-page {
+    --ink: #1f2530;
+    --line: #e8edf4;
+    --shadow: 0 16px 36px rgba(31, 37, 48, 0.08);
+    color: var(--ink);
+    padding-bottom: 2rem;
+  }
+
+  .refund-hero {
+    margin-top: 1.45rem;
+    border-radius: 22px;
+    padding: 1.45rem 1.5rem;
+    background: radial-gradient(circle at 10% 22%, rgba(246, 182, 69, 0.22), transparent 34%),
+                radial-gradient(circle at 90% 16%, rgba(199, 48, 103, 0.2), transparent 34%),
+                linear-gradient(120deg, #fffefb 0%, #f4f6ff 56%, #f2fcff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .refund-hero h2 {
+    margin: 0;
+    font-weight: 800;
+    font-size: clamp(1.45rem, 3vw, 2.2rem);
+  }
+
+  .refund-hero p {
+    margin: 0.45rem 0 0;
+    color: #5a6473;
+  }
+
+  .refund-card {
+    margin-top: 1rem;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: var(--shadow);
+    border: 0;
+    overflow: hidden;
+  }
+
+  .refund-card-body {
+    padding: 1.1rem 1.15rem 1.2rem;
+  }
+
+  .refund-page label {
+    font-weight: 700;
+    color: #2f3948;
+    margin-bottom: 0.35rem;
+  }
+
+  .refund-page .form-control {
+    border-radius: 10px;
+    border: 1px solid #d7dfeb;
+    box-shadow: none;
+  }
+
+  .refund-page textarea.form-control {
+    min-height: 140px;
+  }
+
+  .submit-btn {
+    border: 0;
+    border-radius: 999px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    background: linear-gradient(120deg, #c73067, #e06a94);
+    color: #fff;
+    padding: 0.7rem 1.2rem;
+    min-width: 130px;
+  }
+
+  .submit-btn:hover {
+    color: #fff;
+    filter: brightness(0.98);
+  }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<main class="refund-page">
+  <div class="container">
+    <section class="refund-hero">
+      <h2>Request Refund</h2>
+      <p>Share your order reference and reason. Our team will review and contact you.</p>
+    </section>
+
+    <section class="refund-card">
+      <div class="refund-card-body">
+        <form method="POST">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <button type="submit" class="btn submit-btn mt-2">Submit</button>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+{% endblock content %}

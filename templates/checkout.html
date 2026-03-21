@@ -1,0 +1,433 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block head_title %}Checkout | Fashion HUB{% endblock head_title %}
+
+{% block extra_head %}
+<style>
+  .checkout-page {
+    --ink: #1e2530;
+    --rose: #c73067;
+    --teal: #1d7b84;
+    --soft: #f4f7fc;
+    --line: #e7ebf2;
+    --panel: #ffffff;
+    --shadow: 0 16px 36px rgba(30, 37, 48, 0.08);
+    color: var(--ink);
+    padding-bottom: 2rem;
+  }
+
+  .checkout-hero {
+    margin-top: 1.5rem;
+    border-radius: 22px;
+    padding: 1.45rem 1.5rem;
+    background: radial-gradient(circle at 12% 20%, rgba(246, 182, 69, 0.22), transparent 34%),
+                radial-gradient(circle at 92% 18%, rgba(199, 48, 103, 0.2), transparent 32%),
+                linear-gradient(120deg, #fffefb 0%, #f4f6ff 58%, #f2fcff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .checkout-hero h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    font-weight: 800;
+  }
+
+  .checkout-hero p {
+    margin: 0.45rem 0 0;
+    color: #505865;
+  }
+
+  .checkout-card {
+    border: 0;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    background: var(--panel);
+  }
+
+  .checkout-body {
+    padding: 1.25rem 1.1rem 1.35rem;
+  }
+
+  .section-head {
+    margin-bottom: 0.9rem;
+    padding: 0.72rem 0.9rem;
+    border-radius: 12px;
+    background: linear-gradient(120deg, #f6f8fd, #fbfcff);
+    border: 1px solid var(--line);
+  }
+
+  .section-head h3 {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 800;
+  }
+
+  .checkout-body .form-control,
+  .checkout-body .custom-select {
+    border-radius: 10px;
+    border: 1px solid #d9e1ed;
+    box-shadow: none;
+  }
+
+  .checkout-body label {
+    font-weight: 700;
+    color: #364050;
+    margin-bottom: 0.35rem;
+  }
+
+  .md-form {
+    margin-bottom: 1rem !important;
+  }
+
+  .md-form .form-control {
+    padding: 0.7rem 0.85rem;
+  }
+
+  .md-form label {
+    position: static;
+    transform: none;
+    margin-bottom: 0.35rem;
+    font-weight: 700;
+    color: #364050;
+  }
+
+  .custom-control {
+    margin-bottom: 0.55rem;
+  }
+
+  .map-shell {
+    margin-top: 0.25rem;
+    background: #fbfdff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.75rem;
+  }
+
+  .map-shell .btn {
+    border-radius: 999px;
+    font-weight: 700;
+  }
+
+  #shipping-map,
+  #billing-map {
+    border: 1px solid #dce4ef;
+    box-shadow: inset 0 0 0 1px #fff;
+  }
+
+  .payment-block {
+    background: #fbfdff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.75rem 0.85rem 0.25rem;
+  }
+
+  .checkout-submit {
+    border: 0;
+    border-radius: 999px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    background: linear-gradient(120deg, #c73067, #e06a94);
+    padding: 0.78rem 1.2rem;
+  }
+
+  .divider {
+    border-top: 1px solid var(--line);
+    margin: 1.15rem 0;
+  }
+
+  @media (max-width: 991.98px) {
+    .checkout-body {
+      padding: 1rem 0.95rem 1.15rem;
+    }
+  }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<main class="checkout-page">
+  <div class="container wow fadeIn">
+    <section class="checkout-hero">
+      <h2>Secure Checkout</h2>
+      <p>Enter shipping and billing details, choose delivery slot, and finish payment.</p>
+    </section>
+
+    <div class="row mt-4">
+      <div class="col-md-8 mb-4">
+        <div class="checkout-card">
+          <form method="POST" class="checkout-body">
+            {% csrf_token %}
+
+            <div class="section-head">
+              <h3>Shipping address</h3>
+            </div>
+
+            <div class='hideable_shipping_form'>
+              <div class="md-form">
+                <label for="shipping_address">Address</label>
+                <input type='text' placeholder='1234 Main St' id='shipping_address' name='shipping_address' class='form-control' />
+              </div>
+
+              <div class="md-form">
+                <label for="shipping_address2">Address 2 (optional)</label>
+                <input type='text' placeholder='Apartment or suite' id='shipping_address2' name='shipping_address2' class='form-control' />
+              </div>
+
+              <div class="row">
+                <div class="col-lg-4 col-md-12 mb-4">
+                  <label for="country">Country</label>
+                  {{ form.shipping_country }}
+                  <div class="invalid-feedback">Please select a valid country.</div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                  <label for="shipping_zip">Zip</label>
+                  <input type='text' placeholder='Zip code' id='shipping_zip' name='shipping_zip' class='form-control' />
+                  <div class="invalid-feedback">Zip code required.</div>
+                </div>
+              </div>
+
+              <div class="map-shell mb-3">
+                <label class="d-block">Pick shipping location on map</label>
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="use-shipping-location">Use my location</button>
+                  <small class="text-muted align-self-center">Click map to place pin.</small>
+                </div>
+                <div id="shipping-map" style="height: 260px; border-radius: 10px;"></div>
+                <input type="hidden" id="shipping_latitude" name="shipping_latitude">
+                <input type="hidden" id="shipping_longitude" name="shipping_longitude">
+              </div>
+
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="same_billing_address" id="same_billing_address">
+                <label class="custom-control-label" for="same_billing_address">Billing address is the same as my shipping address</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="set_default_shipping" id="set_default_shipping">
+                <label class="custom-control-label" for="set_default_shipping">Save as default shipping address</label>
+              </div>
+            </div>
+
+            {% if default_shipping_address %}
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" name="use_default_shipping" id="use_default_shipping">
+              <label class="custom-control-label" for="use_default_shipping">Use default shipping address: {{ default_shipping_address.street_address|truncatechars:14 }}</label>
+            </div>
+            {% endif %}
+
+            <hr class="divider" />
+
+            <div class="section-head">
+              <h3>Billing address</h3>
+            </div>
+
+            <div class='hideable_billing_form'>
+              <div class="md-form">
+                <label for="billing_address">Address</label>
+                <input type='text' placeholder='1234 Main St' id='billing_address' name='billing_address' class='form-control' />
+              </div>
+
+              <div class="md-form">
+                <label for="billing_address2">Address 2 (optional)</label>
+                <input type='text' placeholder='Apartment or suite' id='billing_address2' name='billing_address2' class='form-control' />
+              </div>
+
+              <div class="row">
+                <div class="col-lg-4 col-md-12 mb-4">
+                  <label for="country">Country</label>
+                  {{ form.billing_country }}
+                  <div class="invalid-feedback">Please select a valid country.</div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                  <label for="billing_zip">Zip</label>
+                  <input type='text' placeholder='Zip code' id='billing_zip' name='billing_zip' class='form-control' />
+                  <div class="invalid-feedback">Zip code required.</div>
+                </div>
+              </div>
+
+              <div class="map-shell mb-3">
+                <label class="d-block">Pick billing location on map</label>
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                  <button type="button" class="btn btn-sm btn-outline-secondary" id="use-billing-location">Use my location</button>
+                  <small class="text-muted align-self-center">Click map to place pin.</small>
+                </div>
+                <div id="billing-map" style="height: 260px; border-radius: 10px;"></div>
+                <input type="hidden" id="billing_latitude" name="billing_latitude">
+                <input type="hidden" id="billing_longitude" name="billing_longitude">
+              </div>
+
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" name="set_default_billing" id="set_default_billing">
+                <label class="custom-control-label" for="set_default_billing">Save as default billing address</label>
+              </div>
+            </div>
+
+            {% if default_billing_address %}
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" name="use_default_billing" id="use_default_billing">
+              <label class="custom-control-label" for="use_default_billing">Use default billing address: {{ default_billing_address.street_address|truncatechars:14 }}</label>
+            </div>
+            {% endif %}
+
+            <hr class="divider" />
+
+            <div class="section-head">
+              <h3>Availability</h3>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-6 col-md-12 mb-4">
+                <label for="availability_date">Date</label>
+                <input type="date" id="availability_date" name="availability_date" class="form-control" min="{{ MIN_AVAILABILITY_DATE }}" required />
+              </div>
+              <div class="col-lg-6 col-md-12 mb-4">
+                <label for="availability_time">Time</label>
+                <input type="time" id="availability_time" name="availability_time" class="form-control" required />
+              </div>
+            </div>
+
+            <hr class="divider" />
+
+            <div class="section-head">
+              <h3>Payment option</h3>
+            </div>
+
+            <div class="payment-block">
+              <div class="d-block">
+                {% for value, name in form.fields.payment_option.choices %}
+                <div class="custom-control custom-radio mb-2">
+                  <input id="{{ name }}" name="payment_option" value="{{ value }}" type="radio" class="custom-control-input" required>
+                  <label class="custom-control-label" for="{{ name }}">{{ name }}</label>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <hr class="divider" />
+            <button class="btn checkout-submit btn-lg btn-block" type="submit">Continue to checkout</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-md-4 mb-4">
+        {% include "order_snippet.html" %}
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock content %}
+
+{% block extra_scripts %}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var hideable_shipping_form = $('.hideable_shipping_form');
+var hideable_billing_form = $('.hideable_billing_form');
+
+var use_default_shipping = document.querySelector("input[name=use_default_shipping]");
+var use_default_billing = document.querySelector("input[name=use_default_billing]");
+
+if (use_default_shipping) {
+  use_default_shipping.addEventListener('change', function() {
+    if (this.checked) {
+      hideable_shipping_form.hide();
+    } else {
+      hideable_shipping_form.show();
+    }
+  })
+}
+
+if (use_default_billing) {
+  use_default_billing.addEventListener('change', function() {
+    if (this.checked) {
+      hideable_billing_form.hide();
+    } else {
+      hideable_billing_form.show();
+    }
+  })
+}
+
+var same_billing_address = document.getElementById("same_billing_address");
+if (same_billing_address) {
+  same_billing_address.addEventListener('change', function() {
+    if (this.checked) {
+      hideable_billing_form.hide();
+    } else {
+      hideable_billing_form.show();
+    }
+  })
+}
+</script>
+
+<script>
+function initLeafletMap(mapId, inputLatId, inputLngId, useLocationBtnId, addressInputId) {
+  var mapEl = document.getElementById(mapId);
+  if (!mapEl) return;
+
+  var defaultCenter = [20.5937, 78.9629];
+  var map = L.map(mapEl).setView(defaultCenter, 5);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  var marker = L.marker(defaultCenter, { draggable: true }).addTo(map);
+
+  function setLatLng(lat, lng) {
+    marker.setLatLng([lat, lng]);
+    map.panTo([lat, lng]);
+    document.getElementById(inputLatId).value = lat;
+    document.getElementById(inputLngId).value = lng;
+  }
+
+  function fillAddressFromLatLng(lat, lng) {
+    if (!addressInputId) return;
+    var addressInput = document.getElementById(addressInputId);
+    if (!addressInput) return;
+    var url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + lat + "&lon=" + lng;
+    fetch(url, {
+      headers: {
+        "Accept": "application/json"
+      }
+    })
+      .then(function(resp) { return resp.json(); })
+      .then(function(data) {
+        if (data && data.display_name) {
+          addressInput.value = data.display_name;
+        }
+      })
+      .catch(function() {});
+  }
+
+  map.on('click', function(e) {
+    setLatLng(e.latlng.lat, e.latlng.lng);
+    fillAddressFromLatLng(e.latlng.lat, e.latlng.lng);
+  });
+
+  marker.on('dragend', function(e) {
+    var pos = e.target.getLatLng();
+    setLatLng(pos.lat, pos.lng);
+    fillAddressFromLatLng(pos.lat, pos.lng);
+  });
+
+  var btn = document.getElementById(useLocationBtnId);
+  if (btn && navigator.geolocation) {
+    btn.addEventListener('click', function() {
+      navigator.geolocation.getCurrentPosition(function(pos) {
+        setLatLng(pos.coords.latitude, pos.coords.longitude);
+        map.setZoom(14);
+        fillAddressFromLatLng(pos.coords.latitude, pos.coords.longitude);
+      });
+    });
+  }
+}
+
+initLeafletMap('shipping-map', 'shipping_latitude', 'shipping_longitude', 'use-shipping-location', 'shipping_address');
+initLeafletMap('billing-map', 'billing_latitude', 'billing_longitude', 'use-billing-location', 'billing_address');
+</script>
+{% endblock extra_scripts %}

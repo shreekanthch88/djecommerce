@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block head_title %}Payment | Fashion HUB{% endblock head_title %}
+
+{% block extra_head %}
+<style>
+  .payment-page {
+    --ink: #1f2530;
+    --rose: #c73067;
+    --teal: #1d7b84;
+    --line: #e8edf4;
+    --shadow: 0 16px 36px rgba(31, 37, 48, 0.08);
+    color: var(--ink);
+    padding-bottom: 2rem;
+  }
+
+  .payment-hero {
+    margin-top: 1.5rem;
+    border-radius: 22px;
+    padding: 1.5rem;
+    background: radial-gradient(circle at 8% 18%, rgba(246, 182, 69, 0.22), transparent 34%),
+                radial-gradient(circle at 90% 12%, rgba(199, 48, 103, 0.2), transparent 32%),
+                linear-gradient(120deg, #fffefb 0%, #f5f6ff 56%, #f1fcff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .payment-hero h2 {
+    margin: 0;
+    font-weight: 800;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+  }
+
+  .payment-hero p {
+    margin: 0.45rem 0 0;
+    color: #4f5866;
+  }
+
+  .payment-card {
+    margin-top: 1.1rem;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: var(--shadow);
+    border: 0;
+    overflow: hidden;
+  }
+
+  .payment-card-head {
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(120deg, #f8faff, #fbfdff);
+  }
+
+  .payment-card-head h5 {
+    margin: 0;
+    font-weight: 800;
+    font-size: 1.05rem;
+  }
+
+  .payment-card-body {
+    padding: 1.15rem;
+  }
+
+  .payment-note {
+    color: #5a6371;
+    margin-bottom: 1rem;
+  }
+
+  .gateway-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.28rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #0b5f78;
+    background: #e8f8fb;
+    border: 1px solid #bfe9ef;
+    margin-bottom: 0.8rem;
+  }
+
+  .payment-card .razorpay-payment-button {
+    border: 0;
+    border-radius: 999px;
+    padding: 0.72rem 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    color: #fff;
+    background: linear-gradient(120deg, #c73067, #e26b95);
+    box-shadow: 0 10px 22px rgba(199, 48, 103, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .payment-card .razorpay-payment-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 13px 26px rgba(199, 48, 103, 0.32);
+  }
+
+  .popup-help {
+    display: block;
+    margin-top: 0.9rem;
+    color: #616a78;
+  }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<main class="payment-page">
+  <div class="container wow fadeIn">
+    <section class="payment-hero">
+      <h2>Payment</h2>
+      <p>Complete your order securely with Razorpay test checkout.</p>
+    </section>
+
+    <div class="row mt-2">
+      <div class="col-md-12 mb-4">
+        <div class="payment-card">
+          <div class="payment-card-head">
+            <h5>Razorpay Test Checkout</h5>
+          </div>
+          <div class="payment-card-body">
+            <span class="gateway-pill">Secure Gateway - Test Mode</span>
+            <p class="payment-note">Use the button below to open Razorpay checkout and finish this order.</p>
+
+            <form id="razorpay-form" method="post" action="{% url 'core:razorpay-callback' %}">
+              {% csrf_token %}
+              <script
+                src="https://checkout.razorpay.com/v1/checkout.js"
+                data-key="{{ RAZORPAY_KEY_ID }}"
+                data-amount="{{ RAZORPAY_AMOUNT }}"
+                data-currency="INR"
+                data-order_id="{{ RAZORPAY_ORDER_ID }}"
+                data-buttontext="Pay with Razorpay"
+                data-name="Djecommerce"
+                data-description="Order Payment (Test)"
+                data-prefill.name="{{ PREFILL_NAME|escape }}"
+                data-prefill.email="{{ PREFILL_EMAIL|escape }}"
+                data-prefill.contact="{{ PREFILL_CONTACT|escape }}"
+                data-callback_url="{{ RAZORPAY_CALLBACK_URL }}"
+                data-redirect="true"
+                data-theme.color="#1d7b84"
+              ></script>
+              <input type="hidden" name="hidden" value="1" />
+            </form>
+
+            <small class="popup-help">If popup is blocked, allow popups for <strong>127.0.0.1:8000</strong> and retry.</small>
+          </div>
+        </div>
+      </div>
+
+      {% include "order_snippet.html" %}
+    </div>
+  </div>
+</main>
+{% endblock content %}

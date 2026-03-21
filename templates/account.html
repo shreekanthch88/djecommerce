@@ -1,0 +1,424 @@
+{% extends "base.html" %}
+
+{% block head_title %}My Account | Fashion HUB{% endblock head_title %}
+
+{% block extra_head %}
+<style>
+  .account-page {
+    --ink: #1f2530;
+    --rose: #c73067;
+    --teal: #1d7b84;
+    --line: #e8edf4;
+    --soft: #f7f9fd;
+    --shadow: 0 16px 36px rgba(31, 37, 48, 0.08);
+    color: var(--ink);
+    padding-bottom: 2rem;
+  }
+
+  .account-hero {
+    margin-top: 1.45rem;
+    border-radius: 22px;
+    padding: 1.45rem 1.5rem;
+    background: radial-gradient(circle at 10% 22%, rgba(246, 182, 69, 0.22), transparent 34%),
+                radial-gradient(circle at 90% 16%, rgba(199, 48, 103, 0.2), transparent 34%),
+                linear-gradient(120deg, #fffefb 0%, #f4f6ff 56%, #f2fcff 100%);
+    box-shadow: var(--shadow);
+  }
+
+  .account-hero h2 {
+    margin: 0;
+    font-size: clamp(1.5rem, 3vw, 2.3rem);
+    font-weight: 800;
+  }
+
+  .account-hero p {
+    margin: 0.45rem 0 0;
+    color: #55606f;
+  }
+
+  .account-card {
+    border: 0;
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 1.1rem;
+    position: relative;
+    background: #fff;
+  }
+
+  .account-card-head {
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(120deg, #f8faff, #fbfdff);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .account-card-head::after {
+    content: "";
+    position: absolute;
+    right: -34px;
+    top: -38px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(199, 48, 103, 0.15), rgba(74, 128, 224, 0.08) 55%, transparent 70%);
+  }
+
+  .account-card-head h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .account-card-head p {
+    margin: 0.35rem 0 0;
+    color: #636d7c;
+    font-size: 0.9rem;
+  }
+
+  .section-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.82rem;
+    box-shadow: 0 7px 14px rgba(61, 102, 183, 0.2);
+    background: linear-gradient(125deg, #4a80e0, #7d9fff);
+  }
+
+  .account-card-body {
+    padding: 1.05rem 1.1rem 1.15rem;
+    background: #fff;
+  }
+
+  .account-page label {
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+    color: #2f3947;
+  }
+
+  .account-page .form-control,
+  .account-page .form-control-file {
+    border-radius: 10px;
+    border: 1px solid #d7dfeb;
+    box-shadow: none;
+  }
+
+  .avatar-preview {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 10px 20px rgba(31, 37, 48, 0.16);
+  }
+
+  .btn-pill {
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .btn-rose {
+    background: linear-gradient(120deg, #c73067, #e06a94);
+    border: 0;
+    color: #fff;
+  }
+
+  .current-profile {
+    margin-top: 1rem;
+    border-top: 1px solid var(--line);
+    padding-top: 0.9rem;
+  }
+
+  .profile-grid {
+    display: grid;
+    gap: 0.3rem;
+  }
+
+  .profile-grid strong {
+    color: #1c2430;
+  }
+
+  .address-item {
+    border: 1px solid #dce4f0;
+    border-radius: 14px;
+    padding: 0.95rem;
+    background: linear-gradient(155deg, #fcfdff, #f7faff);
+    margin-bottom: 0.8rem;
+    box-shadow: 0 8px 18px rgba(31, 37, 48, 0.06);
+  }
+
+  .address-name {
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin-bottom: 0.15rem;
+    color: #1b2230;
+  }
+
+  .address-phone {
+    color: #566173;
+    margin-bottom: 0.25rem;
+  }
+
+  .address-lines {
+    color: #252d3a;
+    line-height: 1.4;
+  }
+
+  .badge-default {
+    border-radius: 999px;
+    padding: 0.25rem 0.55rem;
+    background: linear-gradient(120deg, #1d7b84, #35a9b3);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .utility-actions a,
+  .utility-actions button {
+    border-radius: 999px;
+    font-weight: 700;
+    margin-left: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding-left: 0.82rem;
+    padding-right: 0.82rem;
+    transition: transform 0.14s ease, box-shadow 0.14s ease;
+  }
+
+  .utility-actions a:hover,
+  .utility-actions button:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-icon-edit {
+    color: #8b55cf;
+    border-color: #b88ce9;
+    box-shadow: 0 6px 14px rgba(139, 85, 207, 0.15);
+  }
+
+  .btn-icon-default {
+    color: #0c9f64;
+    border-color: #1ac47d;
+    box-shadow: 0 6px 14px rgba(12, 159, 100, 0.15);
+  }
+
+  .btn-icon-delete {
+    color: #ff3d5f;
+    border-color: #ff6d86;
+    box-shadow: 0 6px 14px rgba(255, 61, 95, 0.16);
+  }
+
+  .btn-soft-primary {
+    background: linear-gradient(120deg, #477fdf, #4f8ff7);
+    color: #fff !important;
+    border: 0;
+    box-shadow: 0 8px 18px rgba(71, 127, 223, 0.25);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn-soft-primary:hover {
+    color: #fff;
+    filter: brightness(0.98);
+  }
+
+  .btn-outline-secondary,
+  .btn-outline-success,
+  .btn-outline-danger {
+    background: #fff;
+  }
+
+  .account-link-btn {
+    min-width: 190px;
+  }
+
+  @media (max-width: 767.98px) {
+    .account-hero {
+      padding: 1.15rem;
+    }
+
+    .account-card-body {
+      padding: 0.95rem;
+    }
+
+    .utility-actions a,
+    .utility-actions button {
+      margin: 0.2rem 0.2rem 0 0;
+    }
+  }
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+<main class="account-page">
+  <div class="container">
+    <section class="account-hero">
+      <h2>My Account</h2>
+      <p>Manage your profile, delivery addresses, orders, wishlist, and cart in one place.</p>
+    </section>
+
+    {% if messages %}
+    <div class="mt-3">
+      {% for message in messages %}
+      <div class="alert alert-success mb-2">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <section class="card account-card mt-3">
+      <div class="account-card-head">
+        <h4 class="section-title"><span class="section-icon"><i class="fas fa-user"></i></span> 1. Profile Information</h4>
+        <p>Basic user details and account settings.</p>
+      </div>
+      <div class="account-card-body">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label>Full Name</label>
+              <input class="form-control" type="text" name="full_name" value="{{ form.full_name.value|default:request.user.get_full_name }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Email Address</label>
+              <input class="form-control" type="email" name="email" value="{{ form.email.value|default:request.user.email }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Phone Number</label>
+              <input class="form-control" type="text" name="phone_number" value="{{ form.phone_number.value|default:profile.phone_number }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Date of Birth</label>
+              <input class="form-control" type="date" name="date_of_birth" value="{{ form.date_of_birth.value|default:profile.date_of_birth }}">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label>Profile Picture (optional)</label>
+              <input class="form-control-file" type="file" name="profile_picture">
+              {% if profile.profile_picture %}
+              <div class="mt-2">
+                <img src="{{ profile.profile_picture.url }}" alt="Profile" class="avatar-preview">
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="mt-2">
+            <button class="btn btn-rose btn-pill btn-sm" type="submit">Update Profile</button>
+            <a class="btn btn-outline-primary btn-pill btn-sm" href="{% url 'account_change_password' %}">Change Password</a>
+          </div>
+        </form>
+
+        <div class="current-profile">
+          <h6 class="text-muted mb-2">Current Profile</h6>
+          <div class="profile-grid">
+            <div>Full Name: <strong>{{ request.user.get_full_name|default:request.user.username }}</strong></div>
+            <div>Email: <strong>{{ request.user.email }}</strong></div>
+            <div>Phone: <strong>{{ profile.phone_number|default:"-" }}</strong></div>
+            <div>DOB: <strong>{{ profile.date_of_birth|default:"-" }}</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card account-card">
+      <div class="account-card-head">
+        <h4 class="section-title"><span class="section-icon"><i class="fas fa-map-marker-alt"></i></span> 2. Address Book</h4>
+        <p>Save delivery addresses for faster checkout.</p>
+      </div>
+      <div class="account-card-body">
+        <div class="mb-3">
+          <a class="btn btn-sm btn-pill btn-soft-primary" href="{% url 'core:address-add' %}">
+            <i class="fas fa-plus-circle"></i> Add New Address
+          </a>
+        </div>
+        {% if addresses %}
+          {% for address in addresses %}
+          <div class="address-item">
+            <div class="d-flex justify-content-between align-items-start flex-wrap">
+              <div class="pr-2">
+                <div class="address-name">{{ address.full_name }}</div>
+                {% if address.is_default %}
+                <span class="badge-default ml-2">Default</span>
+                {% endif %}
+                <div class="address-phone">{{ address.phone_number }}</div>
+                <div class="address-lines">{{ address.house_no }}, {{ address.street_area }}</div>
+                <div class="address-lines">{{ address.city }}, {{ address.state }} - {{ address.pin_code }}</div>
+                <div class="address-lines">{{ address.country.name }}</div>
+              </div>
+              <div class="utility-actions text-right mt-2 mt-md-0">
+                <a class="btn btn-sm btn-outline-secondary btn-icon-edit" href="{% url 'core:address-edit' address.id %}">
+                  <i class="fas fa-pen"></i> Edit
+                </a>
+                <form method="post" action="{% url 'core:address-default' address.id %}" class="d-inline">
+                  {% csrf_token %}
+                  <button class="btn btn-sm btn-outline-success btn-icon-default" type="submit">
+                    <i class="fas fa-check-circle"></i> Set Default
+                  </button>
+                </form>
+                <a class="btn btn-sm btn-outline-danger btn-icon-delete" href="{% url 'core:address-delete' address.id %}">
+                  <i class="fas fa-trash-alt"></i> Delete
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+        <p class="mb-0">No saved addresses yet.</p>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="card account-card">
+      <div class="account-card-head">
+        <h4 class="section-title"><span class="section-icon"><i class="fas fa-history"></i></span> 3. Order History</h4>
+        <p>View your past orders and current status.</p>
+      </div>
+      <div class="account-card-body">
+        <a class="btn btn-sm btn-pill btn-soft-primary account-link-btn" href="{% url 'core:order-history' %}">
+          <i class="fas fa-box-open"></i> View Order History
+        </a>
+      </div>
+    </section>
+
+    <section class="card account-card">
+      <div class="account-card-head">
+        <h4 class="section-title"><span class="section-icon"><i class="fas fa-heart"></i></span> 4. Wishlist</h4>
+        <p>Keep products saved for later purchase.</p>
+      </div>
+      <div class="account-card-body">
+        <a class="btn btn-sm btn-pill btn-soft-primary account-link-btn" href="{% url 'core:wishlist' %}">
+          <i class="fas fa-heart"></i> View Wishlist
+        </a>
+      </div>
+    </section>
+
+    <section class="card account-card">
+      <div class="account-card-head">
+        <h4 class="section-title"><span class="section-icon"><i class="fas fa-shopping-cart"></i></span> 5. Shopping Cart</h4>
+        <p>Go back to items ready for checkout.</p>
+      </div>
+      <div class="account-card-body">
+        <a class="btn btn-sm btn-pill btn-soft-primary account-link-btn" href="{% url 'core:order-summary' %}">
+          <i class="fas fa-shopping-basket"></i> Go to Cart
+        </a>
+      </div>
+    </section>
+  </div>
+</main>
+{% endblock content %}

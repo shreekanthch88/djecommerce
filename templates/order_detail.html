@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+  <div class="container">
+    <h2 class="my-4">Order Details</h2>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <div><strong>Order ID:</strong> {{ order.ref_code|default:order.id }}</div>
+        <div><strong>Date:</strong> {{ order.ordered_date|date:"d M Y, H:i" }}</div>
+        <div><strong>Status:</strong> {{ order.get_status_display_label }}</div>
+        <div><strong>Total:</strong> &#8377;{{ order.get_total }}</div>
+        <div><strong>Payment:</strong>
+          {% if order.payment and order.payment.razorpay_payment_id %}Razorpay
+          {% elif order.payment and order.payment.stripe_charge_id %}Card
+          {% else %}Unknown{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-body">
+        <h5>Items</h5>
+        <ul class="mb-0">
+          {% for item in order.items.all %}
+          <li>{{ item.item.title }} × {{ item.quantity }} — &#8377;{{ item.get_final_price }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <a class="btn btn-outline-secondary" href="{% url 'core:order-history' %}">Back to Orders</a>
+  </div>
+</main>
+{% endblock content %}
