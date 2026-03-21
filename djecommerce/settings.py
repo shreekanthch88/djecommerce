@@ -2,11 +2,12 @@ import os
 import sys
 
 import dj_database_url
-from decouple import config
+from decouple import AutoConfig
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(BASE_DIR)
+config = AutoConfig(search_path=PROJECT_ROOT)
 
 
 def env_flag(name, default=False):
@@ -42,10 +43,16 @@ def env_list(name, default=''):
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-change-me')
 DEBUG = env_flag('DEBUG', default=True)
 IS_RUNSERVER = 'runserver' in sys.argv
-ALLOWED_HOSTS = env_list('ALLOWED_HOSTS', default='127.0.0.1,localhost')
+ALLOWED_HOSTS = env_list(
+    'ALLOWED_HOSTS',
+    default='127.0.0.1,localhost,shreekanthch.pythonanywhere.com',
+)
 render_hostname = env_value('RENDER_EXTERNAL_HOSTNAME')
 render_service_name = env_value('RENDER_SERVICE_NAME')
-pythonanywhere_domain = env_value('PYTHONANYWHERE_DOMAIN')
+pythonanywhere_domain = env_value(
+    'PYTHONANYWHERE_DOMAIN',
+    default='shreekanthch.pythonanywhere.com',
+)
 if render_hostname and render_hostname not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(render_hostname)
 if render_service_name:

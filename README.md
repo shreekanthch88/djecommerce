@@ -174,9 +174,9 @@ Recommended `.env` values for PythonAnywhere:
 SECRET_KEY=change-me
 DEBUG=False
 DJANGO_SETTINGS_MODULE=djecommerce.settings
-ALLOWED_HOSTS=yourusername.pythonanywhere.com
-CSRF_TRUSTED_ORIGINS=https://yourusername.pythonanywhere.com
-PYTHONANYWHERE_DOMAIN=yourusername.pythonanywhere.com
+ALLOWED_HOSTS=shreekanthch.pythonanywhere.com
+CSRF_TRUSTED_ORIGINS=https://shreekanthch.pythonanywhere.com
+PYTHONANYWHERE_DOMAIN=shreekanthch.pythonanywhere.com
 RAZORPAY_LIVE_KEY_ID=
 RAZORPAY_LIVE_KEY_SECRET=
 ```
