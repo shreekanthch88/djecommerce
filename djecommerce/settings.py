@@ -47,6 +47,10 @@ ALLOWED_HOSTS = env_list(
     'ALLOWED_HOSTS',
     default='127.0.0.1,localhost,shreekanthch.pythonanywhere.com',
 )
+if IS_RUNSERVER:
+    for local_host in ['127.0.0.1', 'localhost', '0.0.0.0', '[::1]']:
+        if local_host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(local_host)
 render_hostname = env_value('RENDER_EXTERNAL_HOSTNAME')
 render_service_name = env_value('RENDER_SERVICE_NAME')
 pythonanywhere_domain = env_value(
@@ -167,6 +171,10 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = ('bootstrap4',)
 
 
 CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS', default='')
+if IS_RUNSERVER:
+    for local_origin in ['http://127.0.0.1:8000', 'http://localhost:8000']:
+        if local_origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(local_origin)
 if render_hostname:
     render_origin = f'https://{render_hostname}'
     if render_origin not in CSRF_TRUSTED_ORIGINS:
